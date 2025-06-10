@@ -1,0 +1,8 @@
+#ignore db
+db.sqlite3
+
+#ignore env
+env/
+
+#ignroe _pycache
+**/__pycache__
