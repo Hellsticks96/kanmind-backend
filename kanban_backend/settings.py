@@ -136,3 +136,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
+
+AUTHENTICATION_BACKENDS = [
+    'user_auth_app.auth_backends.EmailBackend',
+]

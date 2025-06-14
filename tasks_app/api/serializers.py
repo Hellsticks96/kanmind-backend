@@ -18,18 +18,18 @@ class UserSummarySerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     assignee_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
     reviewer_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
-    comments = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), write_only=True, many=True)
 
     assignee = UserSummarySerializer(source='assignee_id', read_only=True)
     reviewer = UserSummarySerializer(source='reviewer_id', read_only=True)
-    comments = serializers.SerializerMethodField()
-
-    def get_comment_count(self, obj):
-        return obj.members.count()
+    comments_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Task
         fields = "__all__"
+
+
+    def get_comments_count(self, obj):
+        return obj.comments.count()
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:

@@ -8,14 +8,14 @@ class Choices:
     status = (
         ("To Do", "To Do"),
         ("In Progress", "In Progress"),
-        ("Review", "Review"),
-        ("Done", "Done")
+        ("review", "review"),
+        ("done", "done")
     )
 
     prio = (
-        ("Low", "Low"),
-        ("Medium", "Medium"),
-        ("High", "High")
+        ("lmow", "lmow"),
+        ("medium", "medium"),
+        ("high", "high")
     )
 
 class Task(models.Model):

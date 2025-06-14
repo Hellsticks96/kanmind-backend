@@ -28,7 +28,11 @@ class SingleBoardDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BoardSerializer
 
 class EmailCheck(generics.ListAPIView):
-    def get(self, request, email, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
+        email = request.GET.get("email")
+        if not email:
+            return JsonResponse({"error": "Email query parameter is required"}, status=400)
+
         try:
             user = User.objects.get(email=email)
             data = {

@@ -13,7 +13,6 @@ class TasksList(generics.ListCreateAPIView):
 class ReviewerTasksList(generics.ListCreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = [IsAssigneeOrReviewer]
     
     def get_queryset(self):
         return Task.objects.filter(reviewer_id=self.request.user)
@@ -21,7 +20,6 @@ class ReviewerTasksList(generics.ListCreateAPIView):
 class AssigneeTasksList(generics.ListCreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = [IsAssigneeOrReviewer]
     
     def get_queryset(self):
         return Task.objects.filter(assignee_id=self.request.user)

@@ -1,6 +1,6 @@
 from rest_framework import generics
 from user_auth_app.models import UserProfile
-from .serializers import RegistrationSerializer, UserProfileSerializer
+from .serializers import RegistrationSerializer, UserProfileSerializer, CustomAuthTokenSerializer
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
@@ -42,7 +42,7 @@ class CustomLoginView(ObtainAuthToken):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
+        serializer = CustomAuthTokenSerializer(data=request.data)
         statuscode = status.HTTP_200_OK
         data = {}
 
@@ -51,7 +51,7 @@ class CustomLoginView(ObtainAuthToken):
             token, _ = Token.objects.get_or_create(user=user)
             data = {
                 'token': token.key,
-                'username': user.username,
+                'fullname': user.username,
                 'email': user.email,
                 'user_id': user.pk
             }
