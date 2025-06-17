@@ -13,19 +13,19 @@ class Choices:
     )
 
     prio = (
-        ("lmow", "lmow"),
+        ("low", "low"),
         ("medium", "medium"),
         ("high", "high")
     )
 
 class Task(models.Model):
-    board = models.ForeignKey(Board, on_delete=models.CASCADE)
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="tasks")
     title = models.CharField(max_length=100)
     description = models.TextField()
     status = models.CharField(choices=Choices.status, default="To Do", max_length=20)
     priority = models.CharField(choices=Choices.prio, default="Medium", max_length=20)
-    assignee_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="asignee_id", null=True)
-    reviewer_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviewer_id", null=True)
+    assignee_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="asigned_tasks", null=True)
+    reviewer_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviewed_tasks", null=True)
     due_date = models.DateTimeField()
 
 class Comment(models.Model):

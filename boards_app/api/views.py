@@ -1,6 +1,6 @@
 from rest_framework import generics
 from boards_app.models import Board
-from .serializers import BoardSerializer, UserSerializer
+from .serializers import BoardSerializer, BoardDetailSerializer
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsOwnerOrMember
 from django.db.models import Q
@@ -25,7 +25,7 @@ class BoardsList(generics.ListCreateAPIView):
 
 class SingleBoardDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Board.objects.all()
-    serializer_class = BoardSerializer
+    serializer_class = BoardDetailSerializer
 
 class EmailCheck(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
