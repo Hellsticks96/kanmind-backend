@@ -16,16 +16,30 @@ class UserSummarySerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    assignee_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
-    reviewer_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
+    assignee_id = serializers.PrimaryKeyRelatedField(
+        source='assignee',
+        queryset=User.objects.all(),
+        write_only=True
+    )
+    reviewer_id = serializers.PrimaryKeyRelatedField(
+        source='reviewer',
+        queryset=User.objects.all(),
+        write_only=True
+    )
 
-    assignee = UserSummarySerializer(source='assignee_id', read_only=True)
-    reviewer = UserSummarySerializer(source='reviewer_id', read_only=True)
+    assignee = UserSummarySerializer(read_only=True)
+    reviewer = UserSummarySerializer(read_only=True)
     comments_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Task
-        fields = "__all__"
+        fields = [
+            'id', 'board', 'title', 'description',
+            'status', 'priority',
+            'assignee_id', 'reviewer_id',
+            'assignee', 'reviewer',
+            'due_date', 'comments_count'
+        ]
 
 
     def get_comments_count(self, obj):

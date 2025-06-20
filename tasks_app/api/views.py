@@ -15,7 +15,7 @@ class ReviewerTasksList(generics.ListCreateAPIView):
     serializer_class = TaskSerializer
     
     def get_queryset(self):
-        return Task.objects.filter(reviewer_id=self.request.user)
+        return Task.objects.filter(reviewer=self.request.user)
     
 class AssigneeTasksList(generics.ListCreateAPIView):
     queryset = Task.objects.all()
