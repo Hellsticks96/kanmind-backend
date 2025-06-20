@@ -51,7 +51,6 @@ class CustomAuthTokenSerializer(serializers.Serializer):
             except User.DoesNotExist:
                 raise serializers.ValidationError({"detail": ["Invalid email or password."]})
     
-            # Use the username to authenticate
             user = authenticate(username=user_obj.username, password=password)
     
             if not user:
