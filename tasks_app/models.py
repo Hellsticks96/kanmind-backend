@@ -27,9 +27,10 @@ class Task(models.Model):
     assignee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="asigned_tasks", null=True)
     reviewer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviewed_tasks", null=True)
     due_date = models.DateTimeField()
+    task_author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="task_author", null=True)
 
 class Comment(models.Model):
     created_at = models.DateField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="author")
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="comments", null=True)

@@ -1,7 +1,7 @@
 from rest_framework import generics
 from tasks_app.models import Task, Comment
 from .serializers import TaskSerializer, CommentSerializer
-from .permissions import IsAssigneeOrReviewer
+from .permissions import IsAssigneeOrReviewer, IsTaskCreatorOrBoardOwner
 from django.utils.timezone import now
 
 
@@ -9,6 +9,10 @@ class TasksList(generics.ListCreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = [IsAssigneeOrReviewer]
+
+    def perform_create(self, serializer):
+        author = self.request.user
+        serializer.save(task_author=author)
 
 class ReviewerTasksList(generics.ListCreateAPIView):
     queryset = Task.objects.all()
@@ -27,6 +31,11 @@ class AssigneeTasksList(generics.ListCreateAPIView):
 class TasksSingleView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+
+    def get_permissions(self):
+        if self.request.method == "DELETE":
+            permission_classes = [IsTaskCreatorOrBoardOwner]
+        return [permission() for permission in permission_classes]
 
 class CommentsList(generics.ListCreateAPIView):
     serializer_class = CommentSerializer

@@ -13,4 +13,12 @@ class IsAssigneeOrReviewer(BasePermission):
             if not board:
                 return False
 
-            return bool(request.user in board.members.all() or request.user.id == board.owner_id)
+            return bool(request.user in board.members.all() or request.user.id == board.owner.id)
+
+class IsTaskCreatorOrBoardOwner(BasePermission):
+    message = "You have to be the owner of the board or the creator of the task to be able to delete it!"
+    def has_object_permission(self, request, view, obj):
+        print(obj.author)
+        board_id = obj.board.owner.id
+        print(board_id)
+        return bool(request.user == obj.task_author or request.user == obj.board.owner)

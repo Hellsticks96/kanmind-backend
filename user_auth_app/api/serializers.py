@@ -24,6 +24,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def save(self):
         pw = self.validated_data['password']
         rep_pw = self.validated_data['repeated_password']
+        fullname = self.validated_data['fullname']
 
         if pw != rep_pw:
             raise serializers.ValidationError({'error': "Passwords don't match"})
@@ -31,7 +32,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         if User.objects.filter(email=self.validated_data['email']).exists():
             raise serializers.ValidationError({'error': 'Email already registered'})
         username = str(uuid.uuid4())[:30]
-        account = User(email=self.validated_data['email'], username=username)
+        account = User(email=self.validated_data['email'], username=fullname)
         account.set_password(pw)
         account.save()
         UserProfile.objects.create(user=account, fullname=self.validated_data['fullname'])

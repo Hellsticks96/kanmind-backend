@@ -10,7 +10,7 @@ class Board(models.Model):
     ticket_count = models.IntegerField(default=0)
     tasks_to_do_count = models.IntegerField(default=0)
     tasks_high_prio_count = models.IntegerField(default=0)
-    owner_id = models.IntegerField(null=True)
+    owner = models.ForeignKey(User, related_name="boards_owned", on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.title

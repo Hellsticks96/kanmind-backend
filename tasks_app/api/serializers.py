@@ -46,10 +46,13 @@ class TaskSerializer(serializers.ModelSerializer):
         return obj.comments.count()
 
 class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SerializerMethodField()
+
     class Meta:
         model = Comment
         fields = ["id", "author", "created_at", "content"]
         read_only_fields = ("author", "created_at")
 
     def get_author(self, obj):
+        print("user at get_author:", obj.author.get_full_name())
         return obj.author.username
