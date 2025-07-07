@@ -6,3 +6,6 @@ env/
 
 #ignroe _pycache
 **/__pycache__
+
+#ignore postman collection json
+KanMind_Postman_collection.json

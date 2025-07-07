@@ -3,6 +3,8 @@ from tasks_app.models import Task, Comment
 from .serializers import TaskSerializer, CommentSerializer
 from .permissions import IsAssigneeOrReviewer, IsTaskCreatorOrBoardOwner
 from django.utils.timezone import now
+from boards_app.api.permissions import IsOwnerOrMember
+from rest_framework.permissions import IsAuthenticated
 
 
 class TasksList(generics.ListCreateAPIView):
@@ -17,6 +19,7 @@ class TasksList(generics.ListCreateAPIView):
 class ReviewerTasksList(generics.ListCreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    permission_classes=[IsAssigneeOrReviewer]
     
     def get_queryset(self):
         return Task.objects.filter(reviewer=self.request.user)
@@ -24,6 +27,7 @@ class ReviewerTasksList(generics.ListCreateAPIView):
 class AssigneeTasksList(generics.ListCreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    permission_classes = [IsAssigneeOrReviewer]
     
     def get_queryset(self):
         return Task.objects.filter(assignee_id=self.request.user)
@@ -34,11 +38,15 @@ class TasksSingleView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_permissions(self):
         if self.request.method == "DELETE":
-            permission_classes = [IsTaskCreatorOrBoardOwner]
-        return [permission() for permission in permission_classes]
+            permission_classes = [IsAuthenticated, IsTaskCreatorOrBoardOwner]
+            return [permission() for permission in permission_classes]
+        if self.request.method == "PATCH":
+            permission_classes = [IsAuthenticated, IsOwnerOrMember]
+            return [permission() for permission in permission_classes]
 
 class CommentsList(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
+    permission_classes = [IsOwnerOrMember]
     def get_queryset(self):
         return Comment.objects.filter(task_id=self.kwargs["pk"])
 
