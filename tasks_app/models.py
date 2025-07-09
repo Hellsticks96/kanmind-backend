@@ -6,8 +6,8 @@ from boards_app.models import Board
 
 class Choices:
     status = (
-        ("To Do", "To Do"),
-        ("In Progress", "In Progress"),
+        ("to-do", "to-do"),
+        ("in-progress", "in-progress"),
         ("review", "review"),
         ("done", "done")
     )

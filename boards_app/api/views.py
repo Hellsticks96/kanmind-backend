@@ -25,17 +25,13 @@ class BoardsList(generics.ListCreateAPIView):
 class SingleBoardDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BoardDetailSerializer
     permission_classes = [IsAuthenticated & IsOwnerOrMember]
+    queryset = Board.objects.all()
 
-    def get_queryset(self):
-        user = self.request.user
-        qs = Board.objects.filter(Q(members = user) | Q(owner_id=user)).distinct()
-        return qs
+    def get_serializer_class(self):
+        if self.request.method in ["PUT", "PATCH"]:
+            return BoardPatchResponseSerializer
+        return super().get_serializer_class()
     
-    def update(self, request, *args, **kwargs):
-        response = super().update(request, *args, **kwargs)
-        board = self.get_object()
-        response_serializer = BoardPatchResponseSerializer(board, context=self.get_serializer_context())
-        return Response(response_serializer.data, status=response.status_code)
     
     def get_permissions(self):
         if self.request.method == "DELETE":

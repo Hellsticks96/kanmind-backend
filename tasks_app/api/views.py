@@ -3,8 +3,9 @@ from tasks_app.models import Task, Comment
 from .serializers import TaskSerializer, CommentSerializer
 from .permissions import IsAssigneeOrReviewer, IsTaskCreatorOrBoardOwner
 from django.utils.timezone import now
-from boards_app.api.permissions import IsOwnerOrMember
+from boards_app.api.permissions import IsOwnerOrMember, IsOwnerOrMemberList
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
 
 
 class TasksList(generics.ListCreateAPIView):
@@ -19,18 +20,14 @@ class TasksList(generics.ListCreateAPIView):
 class ReviewerTasksList(generics.ListCreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes=[IsAssigneeOrReviewer]
-    
-    def get_queryset(self):
-        return Task.objects.filter(reviewer=self.request.user)
+    permission_classes=[IsAuthenticated, IsAssigneeOrReviewer]
+
     
 class AssigneeTasksList(generics.ListCreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = [IsAssigneeOrReviewer]
+    permission_classes = [IsAuthenticated, IsAssigneeOrReviewer]
     
-    def get_queryset(self):
-        return Task.objects.filter(assignee_id=self.request.user)
     
 class TasksSingleView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
@@ -46,12 +43,14 @@ class TasksSingleView(generics.RetrieveUpdateDestroyAPIView):
 
 class CommentsList(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
-    permission_classes = [IsOwnerOrMember]
+    permission_classes = [IsAuthenticated, IsOwnerOrMemberList]
+    
     def get_queryset(self):
-        return Comment.objects.filter(task_id=self.kwargs["pk"])
+        task = get_object_or_404(Task, pk=self.kwargs["pk"])
+        return Comment.objects.filter(task=task)
 
     def perform_create(self, serializer):
-        task = Task.objects.get(id=self.kwargs["pk"])
+        task = get_object_or_404(Task, pk=self.kwargs["pk"])
         serializer.save(task=task, author=self.request.user, created_at=now().date())
 
 class CommentDelete(generics.DestroyAPIView):

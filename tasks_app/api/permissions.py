@@ -15,6 +15,7 @@ class IsAssigneeOrReviewer(BasePermission):
 
             return bool(request.user in board.members.all() or request.user.id == board.owner.id)
         if request.method == "GET":
+            print("getting boards")
             return bool(request.user == obj.assignee or request.user == obj.reviewer)
 
 class IsTaskCreatorOrBoardOwner(BasePermission):
